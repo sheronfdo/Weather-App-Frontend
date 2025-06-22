@@ -1,0 +1,21 @@
+.glassmorphism {
+  background: rgba(255, 242, 242, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.weather-icon {
+  transition: transform 0.2s ease;
+}
+
+.weather-icon:hover {
+  transform: scale(1.2);
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: rgba(0, 0, 0, 1);
+}
