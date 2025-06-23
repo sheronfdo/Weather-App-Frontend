@@ -8,6 +8,7 @@ import LocationDetails from './components/LocationDetails';
 
 function App() {
   const [weatherData, setWeatherData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleSearch = async (location) => {
     try {
@@ -43,20 +44,30 @@ function App() {
     });
   };
 
-  useEffect(() => {
+useEffect(() => {
     const fetchDefaultWeather = async () => {
+      setIsLoading(true); 
       const defaultLocation = await getUserLocation();
-      handleSearch(defaultLocation);
+      await handleSearch(defaultLocation); 
+      setIsLoading(false); 
     };
     fetchDefaultWeather();
   }, []);
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-900">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="relative min-h-screen">
       <WeatherSearch onSearch={handleSearch} />
       <LocationDetails location={weatherData?.location} />
       <WeatherBackgroundAnimation
-        condition={weatherData?.current?.condition?.text || 'patchy light rain with thunder'}
+        condition={weatherData?.current?.condition?.text}
       />
       <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
         <CurrentWeatherTiles weatherData={weatherData} />
