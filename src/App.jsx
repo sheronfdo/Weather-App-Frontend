@@ -2,8 +2,9 @@ import './App.css';
 import CurrentWeatherTiles from './components/CurrentWeatherTiles';
 import WeatherBackgroundAnimation from './components/WeatherBackgroundAnimation';
 import WeatherSearch from './components/WeatherSearch';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
+import LocationDetails from './components/LocationDetails';
 
 function App() {
   const [weatherData, setWeatherData] = useState(null);
@@ -22,11 +23,40 @@ function App() {
     }
   };
 
+  const getUserLocation = () => {
+    return new Promise((resolve, reject) => {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const { latitude, longitude } = position.coords;
+            resolve(`${latitude},${longitude}`);
+          },
+          (error) => {
+            console.error('Geolocation error:', error);
+            resolve('Colombo'); 
+          }
+        );
+      } else {
+        console.error('Geolocation is not supported by this browser.');
+        resolve('Colombo');
+      }
+    });
+  };
+
+  useEffect(() => {
+    const fetchDefaultWeather = async () => {
+      const defaultLocation = await getUserLocation();
+      handleSearch(defaultLocation);
+    };
+    fetchDefaultWeather();
+  }, []);
+
   return (
     <div className="relative min-h-screen">
       <WeatherSearch onSearch={handleSearch} />
-      <WeatherBackgroundAnimation 
-      condition={weatherData?.current?.condition?.text || 'patchy light rain with thunder'}
+      <LocationDetails location={weatherData?.location} />
+      <WeatherBackgroundAnimation
+        condition={weatherData?.current?.condition?.text || 'patchy light rain with thunder'}
       />
       <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
         <CurrentWeatherTiles weatherData={weatherData} />

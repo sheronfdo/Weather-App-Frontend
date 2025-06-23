@@ -1,6 +1,7 @@
 import React from 'react';
 
 const WeatherBackgroundAnimation = ({ condition }) => {
+  console.log('Weather condition:', condition);
   const getAnimationClass = (conditionText) => {
     switch (conditionText.toLowerCase()) {
       case 'patchy light rain with thunder':
