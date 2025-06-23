@@ -44,7 +44,7 @@ function App() {
     });
   };
 
-useEffect(() => {
+  useEffect(() => {
     const fetchDefaultWeather = async () => {
       setIsLoading(true); 
       const defaultLocation = await getUserLocation();
@@ -64,12 +64,14 @@ useEffect(() => {
 
   return (
     <div className="relative min-h-screen">
-      <WeatherSearch onSearch={handleSearch} />
-      <LocationDetails location={weatherData?.location} />
       <WeatherBackgroundAnimation
         condition={weatherData?.current?.condition?.text}
       />
-      <div className="min-h-screen flex items-center justify-center relative overflow-hidden">
+      <div className="grid grid-cols-2 gap-4 w-full max-w-5xl mx-auto m-10 z-20 relative">
+        <WeatherSearch onSearch={handleSearch} />
+        <LocationDetails location={weatherData?.location} />
+      </div>
+      <div className="flex items-center justify-center relative overflow-hidden">
         <CurrentWeatherTiles weatherData={weatherData} />
       </div>
     </div>

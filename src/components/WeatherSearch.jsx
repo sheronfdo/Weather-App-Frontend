@@ -55,7 +55,7 @@ const WeatherSearch = ({ onSearch }) => {
   };
 
   return (
-    <div className="fixed top-4 left-4 z-20 w-full max-w-md">
+    <div className="z-20 w-full">
       <form onSubmit={handleSearch} className="relative flex">
         <input
           type="text"
