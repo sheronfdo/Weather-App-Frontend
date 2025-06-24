@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const WeatherSearch = ({ onSearch }) => {
+const WeatherSearch = ({ onSearch, phase }) => {
   const [location, setLocation] = useState('');
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
+  const [localPhase, setLocalPhase] = useState(phase); // Local state to track phase
+
+  // Update localPhase when phase prop changes
+  useEffect(() => {
+    setLocalPhase(phase);
+  }, [phase]);
 
   // Fetch search suggestions from backend
   const fetchSuggestions = async (query) => {
@@ -54,7 +60,9 @@ const WeatherSearch = ({ onSearch }) => {
     setShowSuggestions(false);
   };
 
-  return (
+  const isLightPhase = localPhase === 'day' || localPhase === 'sunrise' || localPhase === 'sunset';
+
+    return (
     <div className="z-20 w-full">
       <form onSubmit={handleSearch} className="relative flex">
         <input
@@ -64,21 +72,21 @@ const WeatherSearch = ({ onSearch }) => {
           onFocus={() => setShowSuggestions(true)}
           onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
           placeholder="Enter location (e.g., London, New York)"
-          className="p-3 rounded-l-lg bg-gray-800 text-white border border-gray-600 focus:outline-none focus:border-blue-500 w-full"
+          className={`p-3 rounded-l-lg bg-white bg-opacity-20 text-black border border-gray-600 backdrop-filter blur(10px) focus:outline-none focus:border-gray-400 w-full`}
         />
         <button
           type="submit"
-          className="p-3 bg-blue-600 text-white rounded-r-lg hover:bg-blue-700 transition-colors"
+          className={`p-3 bg-gray-500 text-white rounded-r-lg hover:${isLightPhase ? 'bg-gray-800' : 'bg-gray-600'} transition-colors`}
         >
           Search
         </button>
         {showSuggestions && suggestions.length > 0 && (
-          <ul className="absolute top-full left-0 w-full mt-1 bg-gray-800 border border-gray-600 rounded-lg shadow-lg z-30">
+          <ul className={`absolute top-full left-0 w-full mt-1 bg-white bg-opacity-20 border border-gray-600 backdrop-filter blur(10px) rounded-lg shadow-lg z-30`}>
             {suggestions.map((suggestion) => (
               <li
                 key={suggestion.id}
                 onMouseDown={() => handleSuggestionClick(suggestion)}
-                className="p-2 hover:bg-gray-700 cursor-pointer text-white"
+                className={`p-2 hover:bg-gray-700 bg-opacity-20 text-black cursor-pointer`}
               >
                 {suggestion.name}, {suggestion.region}, {suggestion.country}
               </li>

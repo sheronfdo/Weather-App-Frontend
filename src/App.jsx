@@ -119,17 +119,29 @@ function App() {
     );
   }
 
+  // Determine current phase for glassmorphic adjustment
+  const getCurrentPhase = () => {
+    if (!weatherData?.location?.localtime) return 'night';
+    const [hours, minutes] = weatherData.location.localtime.split(' ')[1].split(':').map(Number);
+    const totalMinutes = hours * 60 + minutes;
+    if (totalMinutes >= 1080 || totalMinutes < 300) return 'night'; // 6 PM to 5 AM
+    if (totalMinutes >= 300 && totalMinutes < 360) return 'sunrise'; // 5 AM to 6 AM
+    if (totalMinutes >= 360 && totalMinutes < 1080) return 'day'; // 6 AM to 6 PM
+    if (totalMinutes >= 1080 && totalMinutes < 1140) return 'sunset'; // 6 PM to 7 PM
+    return 'night';
+  };
+
+  const currentPhase = getCurrentPhase();
+
   return (
     <div className="relative">
-      <WeatherBackgroundAnimation
-        condition={weatherData?.current?.condition?.text}
-      />
+      <WeatherBackgroundAnimation weatherData={weatherData} />
       <div className="grid grid-cols-2 gap-6 w-full max-w-6xl mx-auto py-6 z-20">
-        <WeatherSearch onSearch={handleSearch} />
-        <LocationDetails location={weatherData?.location} />
+        <WeatherSearch onSearch={handleSearch} phase={currentPhase}  />
+        <LocationDetails location={weatherData?.location} phase={currentPhase} />
       </div>
       <div className="flex items-center justify-center py-6 z-20">
-        <CurrentWeatherTiles weatherData={weatherData} />
+        <CurrentWeatherTiles weatherData={weatherData} phase={currentPhase} />
       </div>
       <div className="w-full max-w-7xl mx-auto p-6 mt-6 z-20 relative">
         <WeatherTable historical={historicalData || []} forecast={forecastData || []} />
