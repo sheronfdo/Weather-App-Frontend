@@ -37,70 +37,68 @@ const WeatherTable = ({ historical, forecast }) => {
   };
 
   return (
-    <div className="flex items-center justify-center flex-1">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-5xl overflow-x-auto">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Weather Data</h2>
-        <table className="w-full text-sm text-gray-800">
-          <thead>
-            <tr>
-              <th className="p-2 text-left">Time</th>
-              {historical.map(h => (
-                <th key={h.date} className="p-2">{h.date} </th>
-              ))}
-              {forecast.map(f => (
-                <th key={f.date} className="p-2">{f.date} (Forecast)</th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {timeGroups.map((time, groupIndex) => (
-              <tr key={groupIndex} className="border-t">
-                <td className="p-2">{time}</td>
-                {historical.map(h => {
-                  const data = groupData(h.hourly, groupIndex * 3, groupIndex * 3 + 2);
-                  return (
-                    <td key={h.date} className="p-2">
-                      {data ? (
-                        <div className="flex items-center weather-icon-container relative">
-                          <img
-                            src={data.icon}
-                            alt="Weather icon"
-                            className="w-8 h-8 mr-2 weather-icon"
-                          />
-                          <span className="tooltip">{data.condition}</span>
-                          <span className="ml-2">
-                            {data.temp}°C
-                          </span>
-                        </div>
-                      ) : '-'}
-                    </td>
-                  );
-                })}
-                {forecast.map(f => {
-                  const data = groupData(f.hourly, groupIndex * 3, groupIndex * 3 + 2);
-                  return (
-                    <td key={f.date} className="p-2">
-                      {data ? (
-                        <div className="flex items-center weather-icon-container relative">
-                          <img
-                            src={data.icon}
-                            alt="Weather icon"
-                            className="w-8 h-8 mr-2 weather-icon"
-                          />
-                          <span className="tooltip">{data.condition}</span>
-                          <span>
-                            {data.temp}°C, Precip: {data.precip} mm
-                          </span>
-                        </div>
-                      ) : '-'}
-                    </td>
-                  );
-                })}
-              </tr>
+    <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-6xl mx-auto">
+      <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Weather Data</h2>
+      <table className="w-full text-sm text-gray-800">
+        <thead>
+          <tr>
+            <th className="p-2 text-left">Time</th>
+            {historical.map(h => (
+              <th key={h.date} className="p-2">{h.date}</th>
             ))}
-          </tbody>
-        </table>
-      </div>
+            {forecast.map(f => (
+              <th key={f.date} className="p-2">{f.date}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {timeGroups.map((time, groupIndex) => (
+            <tr key={groupIndex} className="border-t">
+              <td className="p-2">{time}</td>
+              {historical.map(h => {
+                const data = groupData(h.hourly, groupIndex * 3, groupIndex * 3 + 2);
+                return (
+                  <td key={h.date} className="p-2">
+                    {data ? (
+                      <div className="flex items-center weather-icon-container relative">
+                        <img
+                          src={data.icon}
+                          alt="Weather icon"
+                          className="w-8 h-8 mr-2 weather-icon"
+                        />
+                        <span className="tooltip">{data.condition}</span>
+                        <span>
+                          {data.temp}°C
+                        </span>
+                      </div>
+                    ) : '-'}
+                  </td>
+                );
+              })}
+              {forecast.map(f => {
+                const data = groupData(f.hourly, groupIndex * 3, groupIndex * 3 + 2);
+                return (
+                  <td key={f.date} className="p-2">
+                    {data ? (
+                      <div className="flex items-center weather-icon-container relative">
+                        <img
+                          src={data.icon}
+                          alt="Weather icon"
+                          className="w-8 h-8 mr-2 weather-icon"
+                        />
+                        <span className="tooltip">{data.condition}</span>
+                        <span>
+                          {data.temp}°C, Precip: {data.precip} mm
+                        </span>
+                      </div>
+                    ) : '-'}
+                  </td>
+                );
+              })}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };

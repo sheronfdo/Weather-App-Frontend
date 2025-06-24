@@ -10,6 +10,7 @@ import WeatherTable from './components/WeatherTable';
 function App() {
   const [weatherData, setWeatherData] = useState(null);
   const [historicalData, setHistoricalData] = useState(null);
+  const [forecastData, setForecastData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
   const handleSearch = async (location) => {
@@ -17,7 +18,6 @@ function App() {
       setIsLoading(true);
       console.log('Searching for weather data for:', location);
 
-      // Ensure location is a string (e.g., "Colombo" or user input)
       const locationName = typeof location === 'string' ? location : 'Colombo';
 
       const currentResponse = await axios.get('http://localhost:3000/api/current', {
@@ -26,13 +26,12 @@ function App() {
       console.log('Current weather data:', currentResponse.data);
       setWeatherData(currentResponse.data);
 
-      // Fetch historical data for the past 7 days up to yesterday
       const today = new Date();
       const historicalDates = [];
       for (let i = 2; i >= 0; i--) {
         const date = new Date(today);
-        date.setDate(today.getDate() - i - 1); // -1 to exclude today (June 23, 2025, and earlier)
-        historicalDates.push(date.toISOString().split('T')[0]); // Format as YYYY-MM-DD
+        date.setDate(today.getDate() - i - 1); 
+        historicalDates.push(date.toISOString().split('T')[0]); 
       }
       const historicalPromises = historicalDates.map(date =>
         axios.get('http://localhost:3000/api/history', {
@@ -43,7 +42,7 @@ function App() {
       const historicalDataArray = historicalResponses.map(response => ({
         date: response.data.forecast.forecastday[0].date,
         hourly: response.data.forecast.forecastday[0].hour.map(h => ({
-          time: h.time.split(' ')[1], // Extract time (e.g., "14:00")
+          time: h.time.split(' ')[1], 
           temp: h.temp_c,
           condition: h.condition.text,
           precip: h.precip_mm,
@@ -51,10 +50,32 @@ function App() {
         }))
       }));
       setHistoricalData(historicalDataArray);
+
+      const forecastDates = [];
+      for (let i = 1; i <= 2; i++) {
+        const date = new Date(today);
+        date.setDate(today.getDate() + i); 
+        forecastDates.push(date.toISOString().split('T')[0]); 
+      }
+      const forecastResponse = await axios.get('http://localhost:3000/api/forecast', {
+        params: { q: locationName, days: 2 } 
+      });
+      const forecastDataArray = forecastResponse.data.forecast.forecastday.map(day => ({
+        date: day.date,
+        hourly: day.hour.map(h => ({
+          time: h.time.split(' ')[1], 
+          temp: h.temp_c,
+          condition: h.condition.text,
+          precip: h.precip_mm,
+          icon: h.condition.icon
+        }))
+      }));
+      setForecastData(forecastDataArray);
     } catch (error) {
       console.error('Error fetching weather data:', error);
       setWeatherData(null);
       setHistoricalData(null);
+      setForecastData(null);
     } finally {
       setIsLoading(false);
     }
@@ -66,18 +87,17 @@ function App() {
         navigator.geolocation.getCurrentPosition(
           (position) => {
             const { latitude, longitude } = position.coords;
-            // Since historical API doesn't support lat/lon, fall back to a default location
             console.log(`Geolocation detected: ${latitude}, ${longitude}, using Colombo as fallback`);
-            resolve('Colombo'); // Fallback to location name
+            resolve('Colombo'); 
           },
           (error) => {
             console.error('Geolocation error:', error);
-            resolve('Colombo'); // Default to Colombo on error
+            resolve('Colombo'); 
           }
         );
       } else {
         console.error('Geolocation is not supported by this browser.');
-        resolve('Colombo'); // Default to Colombo if geolocation unsupported
+        resolve('Colombo'); 
       }
     });
   };
@@ -104,15 +124,15 @@ function App() {
       <WeatherBackgroundAnimation
         condition={weatherData?.current?.condition?.text}
       />
-      <div className="grid grid-cols-2 gap-4 w-full max-w-5xl mx-auto m-10 z-20 relative">
+      <div className="grid grid-cols-2 gap-6 w-full max-w-6xl mx-auto py-6 z-20 relative">
         <WeatherSearch onSearch={handleSearch} />
         <LocationDetails location={weatherData?.location} />
       </div>
-      <div className="flex items-center justify-center relative overflow-hidden">
+      <div className="flex items-center justify-center py-6 relative overflow-hidden">
         <CurrentWeatherTiles weatherData={weatherData} />
       </div>
-      <div className="w-full max-w-5xl mx-auto p-4 mt-10 z-20 relative">
-        <WeatherTable historical={historicalData || []} forecast={[]} />
+      <div className="w-full max-w-6xl mx-auto p-6 mt-6 z-20 relative">
+        <WeatherTable historical={historicalData || []} forecast={forecastData || []} />
       </div>
     </div>
   );
