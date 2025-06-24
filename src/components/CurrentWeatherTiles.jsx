@@ -37,7 +37,7 @@ const CurrentWeatherTiles = ({ weatherData }) => {
         <div className="flex items-center h-full">
           <img src={current.condition.icon} alt="Weather icon" className="w-24 h-24 mr-6 weather-icon" />
           <div className="flex-1">
-            <p className="text-4xl font-semibold">{current.temp_c}°C</p>
+            <p className="text-5xl font-semibold">{current.temp_c}°C</p>
             <p className="text-xl">{current.condition.text}</p>
           </div>
         </div>
@@ -48,7 +48,7 @@ const CurrentWeatherTiles = ({ weatherData }) => {
             <img src={item.icon} alt={`${item.label} icon`} className="w-6 h-6 mr-2" />
             <div>
               <p className="text-xs">{item.label}</p>
-              <p className="text-sm font-medium">{item.value}</p>
+              <p className="text-2sm font-medium">{item.value}</p>
             </div>
           </div>
         ))}

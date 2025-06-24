@@ -28,9 +28,9 @@ function App() {
 
       const today = new Date();
       const historicalDates = [];
-      for (let i = 2; i >= 0; i--) {
+      for (let i = 1; i >= 0; i--) {
         const date = new Date(today);
-        date.setDate(today.getDate() - i - 1); 
+        date.setDate(today.getDate() - i); 
         historicalDates.push(date.toISOString().split('T')[0]); 
       }
       const historicalPromises = historicalDates.map(date =>
@@ -52,13 +52,13 @@ function App() {
       setHistoricalData(historicalDataArray);
 
       const forecastDates = [];
-      for (let i = 1; i <= 2; i++) {
+      for (let i = 1; i <= 3; i++) {
         const date = new Date(today);
         date.setDate(today.getDate() + i); 
         forecastDates.push(date.toISOString().split('T')[0]); 
       }
       const forecastResponse = await axios.get('http://localhost:3000/api/forecast', {
-        params: { q: locationName, days: 2 } 
+        params: { q: locationName, days: 3 } 
       });
       const forecastDataArray = forecastResponse.data.forecast.forecastday.map(day => ({
         date: day.date,
@@ -120,18 +120,18 @@ function App() {
   }
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative">
       <WeatherBackgroundAnimation
         condition={weatherData?.current?.condition?.text}
       />
-      <div className="grid grid-cols-2 gap-6 w-full max-w-6xl mx-auto py-6 z-20 relative">
+      <div className="grid grid-cols-2 gap-6 w-full max-w-6xl mx-auto py-6 z-20">
         <WeatherSearch onSearch={handleSearch} />
         <LocationDetails location={weatherData?.location} />
       </div>
-      <div className="flex items-center justify-center py-6 relative overflow-hidden">
+      <div className="flex items-center justify-center py-6 z-20">
         <CurrentWeatherTiles weatherData={weatherData} />
       </div>
-      <div className="w-full max-w-6xl mx-auto p-6 mt-6 z-20 relative">
+      <div className="w-full max-w-7xl mx-auto p-6 mt-6 z-20 relative">
         <WeatherTable historical={historicalData || []} forecast={forecastData || []} />
       </div>
     </div>

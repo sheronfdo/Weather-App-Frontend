@@ -42,7 +42,7 @@ const WeatherSearch = ({ onSearch }) => {
   };
 
   const handleSuggestionClick = (suggestion) => {
-    const selectedLocation = suggestion.name;
+    const selectedLocation = suggestion.url;
     setLocation(selectedLocation);
     setShowSuggestions(false);
     if (onSearch) onSearch(selectedLocation);

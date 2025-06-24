@@ -16,7 +16,21 @@ html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-  overflow: hidden;
+  /* Removed overflow: hidden to allow scrolling */
+  overflow-y: auto; /* Enable vertical scrolling */
+  overflow-x: hidden; /* Prevent unnecessary horizontal scrolling unless needed */
+}
+
+@media (min-width: 1920px) {
+  .max-w-7xl {
+    max-width: 1920px; /* Ensure full width at 1920x1080 */
+  }
+  table {
+    table-layout: auto; /* Allow columns to size naturally */
+  }
+  th, td {
+    min-width: 120px; /* Increase minimum width for readability */
+  }
 }
 
 /* Default background */
@@ -289,13 +303,6 @@ html, body {
 
 .weather-icon:hover {
   transform: scale(1.2);
-}
-
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
-  overflow: hidden;
 }
 
 /* Position and animate particles dynamically */

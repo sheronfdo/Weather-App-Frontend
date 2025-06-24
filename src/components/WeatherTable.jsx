@@ -37,7 +37,7 @@ const WeatherTable = ({ historical, forecast }) => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-6xl mx-auto">
+    <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-7xl mx-auto overflow-x-auto">
       <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Weather Data</h2>
       <table className="w-full text-sm text-gray-800">
         <thead>
@@ -66,7 +66,7 @@ const WeatherTable = ({ historical, forecast }) => {
                           alt="Weather icon"
                           className="w-8 h-8 mr-2 weather-icon"
                         />
-                        <span className="tooltip">{data.condition}</span>
+                        <span className="tooltip mr-2">{data.condition}</span>
                         <span>
                           {data.temp}°C
                         </span>
@@ -86,9 +86,9 @@ const WeatherTable = ({ historical, forecast }) => {
                           alt="Weather icon"
                           className="w-8 h-8 mr-2 weather-icon"
                         />
-                        <span className="tooltip">{data.condition}</span>
+                        <span className="tooltip mr-2">{data.condition}</span>
                         <span>
-                          {data.temp}°C, Precip: {data.precip} mm
+                          {data.temp}°C
                         </span>
                       </div>
                     ) : '-'}
@@ -96,7 +96,8 @@ const WeatherTable = ({ historical, forecast }) => {
                 );
               })}
             </tr>
-          ))}
+          ))
+          }
         </tbody>
       </table>
     </div>
