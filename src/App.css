@@ -563,3 +563,57 @@ body {
     padding-right: 1rem; 
   }
 }
+
+@media (max-width: 1200px) {
+  .grid.grid-cols-2 {
+    grid-template-columns: 1fr; 
+    gap: 1rem; 
+    width: calc(100% - 4rem); 
+    margin-left: 2rem; 
+    margin-right: 2rem; 
+  }
+
+  .grid.grid-cols-1.md\:grid-cols-\[2fr_4fr\] {
+    grid-template-columns: 1fr;
+    gap: 1rem; 
+    width: calc(100% - 4rem); 
+    margin-left: 2rem; 
+    margin-right: 2rem; 
+  }
+}
+
+@media (max-width: 320px) {
+.grid.grid-cols-1.md\:grid-cols-\[2fr_4fr\] > :first-child {
+    min-height: 200px; 
+    padding: 0.75rem; 
+    width: 100%; 
+    box-sizing: border-box; 
+  }
+
+  .grid.grid-cols-1.md\:grid-cols-\[2fr_4fr\] {
+    width: calc(100% - 4rem); 
+    margin-left: 2rem;
+    margin-right: 2rem;
+  }
+
+  .glassmorphism {
+    overflow: hidden; 
+    padding: 0.5rem; 
+  }
+
+  .weather-icon-container {
+    font-size: 0.75rem; 
+  }
+
+  .weather-icon {
+    width: 4rem; 
+    height: 4rem; 
+    margin-right: 0.5rem; 
+    margin-bottom: 0.5rem;
+  }
+
+  .tooltip {
+    font-size: 0.5rem; 
+  }
+
+}
