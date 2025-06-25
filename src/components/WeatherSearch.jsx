@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { getSearchSuggestions } from '../api/weatherAPI';
+
 
 const WeatherSearch = ({ onSearch, phase }) => {
   const [location, setLocation] = useState('');
@@ -19,9 +21,7 @@ const WeatherSearch = ({ onSearch, phase }) => {
       return;
     }
     try {
-      const response = await axios.get('http://localhost:3000/api/search', {
-        params: { q: query }
-      });
+      const response = await getSearchSuggestions(query);
       setSuggestions(response.data);
     } catch (error) {
       console.error('Error fetching suggestions:', error);

@@ -1,11 +1,10 @@
 import './App.css';
-import CurrentWeatherTiles from './components/CurrentWeatherTiles';
-import WeatherBackgroundAnimation from './components/WeatherBackgroundAnimation';
-import WeatherSearch from './components/WeatherSearch';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
-import LocationDetails from './components/LocationDetails';
-import WeatherTable from './components/WeatherTable';
+import { getCurrentWeather, getForecast, getHistory } from './api/weatherAPI';
+import { CurrentWeatherTiles, LocationDetails, WeatherBackgroundAnimation, WeatherSearch, WeatherTable } from './components';
+import Loader from './components/common/Loader';
+import { getPhaseFromLocalTime } from './utils/weatherUtils';
 
 function App() {
   const [weatherData, setWeatherData] = useState(null);
@@ -20,13 +19,11 @@ function App() {
 
       const locationName = typeof location === 'string' ? location : 'Colombo';
 
-      const currentResponse = await axios.get('http://localhost:3000/api/current', {
-        params: { q: locationName }
-      });
+      const currentResponse = await getCurrentWeather(locationName);
       console.log('Current weather data:', currentResponse.data);
       setWeatherData(currentResponse.data);
 
-      const today =  new Date(currentResponse.data?.location?.localtime);
+      const today = new Date(currentResponse.data?.location?.localtime);
       // const locationDate = today.toISOString().split('T')[0]; 
       console.log('Current date for historical data:', today);
       const historicalDates = [];
@@ -39,10 +36,7 @@ function App() {
 
       console.log('Historical dates:', historicalDates);
 
-      const historicalPromises = historicalDates.map(date =>
-        axios.get('http://localhost:3000/api/history', {
-          params: { q: locationName, dt: date }
-        })
+      const historicalPromises = historicalDates.map(date => getHistory(locationName, date)
       );
       const historicalResponses = await Promise.all(historicalPromises);
       const historicalDataArray = historicalResponses.map(response => ({
@@ -64,9 +58,7 @@ function App() {
         forecastDates.push(date.toDateString().split(' ').slice(1).join(' '));
       }
 
-      const forecastResponse = await axios.get('http://localhost:3000/api/forecast', {
-        params: { q: locationName, days: 4 } 
-      });
+      const forecastResponse = await getForecast(locationName, 4);
       const forecastDataArray = forecastResponse.data.forecast.forecastday.map(day => ({
         date: day.date,
         hourly: day.hour.map(h => ({
@@ -119,25 +111,11 @@ function App() {
   }, []);
 
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gray-900">
-        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
-      </div>
-    );
+    return <Loader />;
   }
 
-  const getCurrentPhase = () => {
-    if (!weatherData?.location?.localtime) return 'night';
-    const [hours, minutes] = weatherData.location.localtime.split(' ')[1].split(':').map(Number);
-    const totalMinutes = hours * 60 + minutes;
-    if (totalMinutes >= 1080 || totalMinutes < 300) return 'night'; // 6 PM to 5 AM
-    if (totalMinutes >= 300 && totalMinutes < 360) return 'sunrise'; // 5 AM to 6 AM
-    if (totalMinutes >= 360 && totalMinutes < 1080) return 'day'; // 6 AM to 6 PM
-    if (totalMinutes >= 1080 && totalMinutes < 1140) return 'sunset'; // 6 PM to 7 PM
-    return 'night';
-  };
 
-  const currentPhase = getCurrentPhase();
+  const currentPhase = getPhaseFromLocalTime(weatherData?.location?.localtime);
 
   return (
     <div className="relative">
