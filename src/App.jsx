@@ -52,13 +52,13 @@ function App() {
       setHistoricalData(historicalDataArray);
 
       const forecastDates = [];
-      for (let i = 1; i <= 4; i++) {
+      for (let i = 1; i <= 5; i++) {
         const date = new Date(today);
         date.setDate(today.getDate() + i);
         forecastDates.push(date.toDateString().split(' ').slice(1).join(' '));
       }
 
-      const forecastResponse = await getForecast(locationName, 4);
+      const forecastResponse = await getForecast(locationName, 5);
       const forecastDataArray = forecastResponse.data.forecast.forecastday.map(day => ({
         date: day.date,
         hourly: day.hour.map(h => ({
