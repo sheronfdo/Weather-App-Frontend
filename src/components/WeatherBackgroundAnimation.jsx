@@ -17,7 +17,7 @@ const WeatherBackgroundAnimation = ({ weatherData }) => {
 
   const isNight = totalMinutes >= 1080 || totalMinutes < 330; // 7:00 PM to 5:30 AM
   const isSunrise = totalMinutes >= 330 && totalMinutes < 420; // 5:30 AM to 7:00 AM
-  const isDay = totalMinutes >= 420 && totalMinutes < 1080; // 7:00 AM to 7:00 PM
+  const isDay = totalMinutes >= 420 && totalMinutes < 1020; // 7:00 AM to 7:00 PM
   const isSunset = totalMinutes >= 1020 && totalMinutes < 1080; // 6:00 PM to 7:00 PM
 
   const timeClass = isNight ? 'night-animation' :
@@ -40,7 +40,7 @@ const WeatherBackgroundAnimation = ({ weatherData }) => {
 
   const weatherCondition = weatherData?.current?.condition?.text || 'Clear';
   const animationType = getWeatherAnimationType(weatherCondition);
-  // const animationType = getWeatherAnimationType('fog');
+  // const animationType = getWeatherAnimationType('rain');
 
   return (
     <div className={`fixed inset-0 z-0 overflow-hidden ${timeClass}`}>
