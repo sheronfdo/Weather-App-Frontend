@@ -39,8 +39,8 @@ const WeatherBackgroundAnimation = ({ weatherData }) => {
   };
 
   const weatherCondition = weatherData?.current?.condition?.text || 'Clear';
-  // const animationType = getWeatherAnimationType(weatherCondition);
-  const animationType = getWeatherAnimationType('fog');
+  const animationType = getWeatherAnimationType(weatherCondition);
+  // const animationType = getWeatherAnimationType('fog');
 
   return (
     <div className={`fixed inset-0 z-0 overflow-hidden ${timeClass}`}>
