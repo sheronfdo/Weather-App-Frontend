@@ -194,26 +194,26 @@ const WeatherBackgroundAnimation = ({ weatherData }) => {
         </div>
       )}
 
-{animationType === 'fog' && (
-  <div className="fog absolute inset-0 pointer-events-none z-10 overflow-hidden">
-    {[...Array(4)].map((_, i) => (
-      <div
-        key={i}
-        className="fog-texture"
-        style={{
-          top: `${i * 20 + 5}%`,
-          left: `${Math.random() * 100 - 30}%`,
-          animationDelay: `${Math.random() * 15}s`,
-          animationDuration: `${60 + Math.random() * 30}s`,
-          transform: `scale(${1.2 + Math.random() * 0.4})`,
-          opacity: `${0.15 + Math.random() * 0.2}`,
-          zIndex: 10 - i
-        }}
-      />
-    ))}
-    <div className="fog-ground" />
-  </div>
-)}
+      {animationType === 'fog' && (
+        <div className="fog absolute inset-0 pointer-events-none z-10 overflow-hidden">
+          {[...Array(4)].map((_, i) => (
+            <div
+              key={i}
+              className="fog-texture"
+              style={{
+                top: `${i * 20 + 5}%`,
+                left: `${Math.random() * 100 - 30}%`,
+                animationDelay: `${Math.random() * 15}s`,
+                animationDuration: `${60 + Math.random() * 30}s`,
+                transform: `scale(${1.2 + Math.random() * 0.4})`,
+                opacity: `${0.15 + Math.random() * 0.2}`,
+                zIndex: 10 - i
+              }}
+            />
+          ))}
+          <div className="fog-ground" />
+        </div>
+      )}
 
 
 

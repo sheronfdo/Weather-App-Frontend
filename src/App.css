@@ -494,3 +494,72 @@ body {
     opacity: 0.4;
   }
 }
+
+
+@media (max-width: 767px) {
+  .grid.grid-cols-2 {
+    grid-template-columns: 1fr; 
+    gap: 1rem; 
+    width: calc(100% - 4rem); 
+    margin-left: 2rem; 
+    margin-right: 2rem; 
+  }
+
+  .grid.grid-cols-2 > div {
+    width: 100%;
+  }
+
+  .grid.grid-cols-2 > :first-child {
+    order: 1; 
+  }
+
+  .grid.grid-cols-2 > :last-child {
+    order: 2; 
+  }
+
+  .grid.grid-cols-1.md\:grid-cols-\[2fr_4fr\] {
+    grid-template-columns: 1fr;
+    gap: 1rem; 
+    width: calc(100% - 4rem); 
+    margin-left: 2rem; 
+    margin-right: 2rem; 
+  }
+
+  .grid.grid-cols-1.md\:grid-cols-\[2fr_4fr\] > :first-child {
+    height: auto; 
+    min-height: 250px; 
+    padding: 1.5rem; 
+  }
+
+  .grid.grid-cols-4 {
+    grid-template-columns: 1fr;
+    gap: 0.5rem; 
+    height: auto; 
+  }
+
+  .grid.grid-cols-4 > div {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start; 
+    padding: 0.75rem; 
+    text-align: left; 
+  }
+
+  .grid.grid-cols-4 > div > img {
+    width: 1.5rem; 
+    height: 1.5rem;
+    margin-right: 0.75rem;
+  }
+
+  .grid.grid-cols-4 > div > div > p:first-child {
+    font-size: 0.875rem;
+  }
+  .grid.grid-cols-4 > div > div > p:last-child {
+    font-size: 0.875rem; 
+  }
+
+  .glassmorphism {
+    padding-left: 1rem; 
+    padding-right: 1rem; 
+  }
+}
