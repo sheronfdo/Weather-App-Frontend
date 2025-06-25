@@ -21,9 +21,9 @@ const WeatherBackgroundAnimation = ({ weatherData }) => {
   const isSunset = totalMinutes >= 1080 && totalMinutes < 1140; // 7:00 PM to 8:00 PM
 
   const timeClass = isNight ? 'night-animation' :
-                   isSunrise ? 'sunrise-animation' :
-                   isDay ? 'day-animation' :
-                   isSunset ? 'sunset-animation' : 'night-animation';
+    isSunrise ? 'sunrise-animation' :
+      isDay ? 'day-animation' :
+        isSunset ? 'sunset-animation' : 'night-animation';
 
   const getWeatherAnimationType = (condition) => {
     if (!condition) return 'clear';
@@ -40,7 +40,7 @@ const WeatherBackgroundAnimation = ({ weatherData }) => {
 
   const weatherCondition = weatherData?.current?.condition?.text || 'Clear';
   // const animationType = getWeatherAnimationType(weatherCondition);
-  const animationType = getWeatherAnimationType('hail');
+  const animationType = getWeatherAnimationType('fog');
 
   return (
     <div className={`fixed inset-0 z-0 overflow-hidden ${timeClass}`}>
@@ -142,23 +142,30 @@ const WeatherBackgroundAnimation = ({ weatherData }) => {
       )}
 
       {animationType === 'cloudy' && (
-        <div className="clouds absolute inset-0">
-          {[...Array(8)].map((_, i) => (
-            <div key={i} className="cloud absolute" style={{
-              width: `${150 + Math.random() * 100}px`,
-              height: `${60 + Math.random() * 40}px`,
-              top: `${-10 + i * 12 + Math.random() * 15}%`,
-              left: `${-40 + i * 15}%`,
-              background: `radial-gradient(circle at ${Math.random() * 80 + 10}% ${Math.random() * 80 + 10}%, rgba(255, 255, 255, 0.9), rgba(220, 220, 220, 0.7) ${Math.random() * 60 + 30}%, rgba(180, 180, 180, 0.5))`,
-              borderRadius: `${Math.random() * 30 + 15}px ${Math.random() * 30 + 15}px ${Math.random() * 30 + 15}px ${Math.random() * 30 + 15}px`,
-              opacity: `${0.6 + Math.random() * 0.3}`,
-              animation: `cloud-drift ${18 + Math.random() * 12}s linear infinite`,
-              filter: 'blur(4px)',
+        <div className="clouds absolute inset-0 pointer-events-none overflow-hidden">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="cloud-cluster" style={{
+              top: `${Math.random() * 50 + 10}%`,
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 20}s`,
+              transform: `scale(${0.8 + Math.random() * 0.5})`,
               zIndex: i
-            }} />
+            }}>
+              {[...Array(5)].map((_, j) => (
+                <div key={j} className="cloud-part" style={{
+                  top: `${Math.random() * 20}px`,
+                  left: `${j * 35 + Math.random() * 10}px`,
+                  width: `${60 + Math.random() * 40}px`,
+                  height: `${40 + Math.random() * 30}px`,
+                  background: `radial-gradient(circle at center, rgba(255,255,255,0.9), rgba(230,230,230,0.7))`,
+                  animationDelay: `${Math.random() * 10}s`,
+                }} />
+              ))}
+            </div>
           ))}
         </div>
       )}
+
 
       {animationType === 'windy' && (
         <div className="wind absolute inset-0">
@@ -187,22 +194,28 @@ const WeatherBackgroundAnimation = ({ weatherData }) => {
         </div>
       )}
 
-      {animationType === 'fog' && (
-        <div className="fog absolute inset-0" style={{
-          background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3))',
-          backdropFilter: 'blur(15px)',
-          animation: 'fog-spread 25s infinite alternate'
-        }}>
-          {[...Array(5)].map((_, i) => (
-            <div key={i} className="fog-layer absolute inset-0" style={{
-              background: `radial-gradient(circle at ${Math.random() * 100}% ${Math.random() * 100}%, rgba(255, 255, 255, ${0.4 - i * 0.1}), transparent 70%)`,
-              animation: `fog-drift ${25 + i * 5}s linear infinite`,
-              transform: `translateX(${i * -10}%)`,
-              opacity: `${0.8 - i * 0.15}`
-            }} />
-          ))}
-        </div>
-      )}
+{animationType === 'fog' && (
+  <div className="fog absolute inset-0 pointer-events-none z-10 overflow-hidden">
+    {[...Array(4)].map((_, i) => (
+      <div
+        key={i}
+        className="fog-texture"
+        style={{
+          top: `${i * 20 + 5}%`,
+          left: `${Math.random() * 100 - 30}%`,
+          animationDelay: `${Math.random() * 15}s`,
+          animationDuration: `${60 + Math.random() * 30}s`,
+          transform: `scale(${1.2 + Math.random() * 0.4})`,
+          opacity: `${0.15 + Math.random() * 0.2}`,
+          zIndex: 10 - i
+        }}
+      />
+    ))}
+    <div className="fog-ground" />
+  </div>
+)}
+
+
 
       {animationType === 'hail' && (
         <div className="hail absolute inset-0">
