@@ -3,70 +3,235 @@ import React from 'react';
 const WeatherBackgroundAnimation = ({ weatherData }) => {
   console.log('Weather data:', weatherData);
 
-  // Get current time from weatherData.location.localtime
   const getCurrentTime = () => {
     if (weatherData?.location?.localtime) {
       const [date, time] = weatherData.location.localtime.split(' ');
-      return time; // e.g., "03:14"
+      return time;
     }
-    return '00:00'; // Fallback to midnight if no data
+    return '00:00';
   };
 
   const currentTime = getCurrentTime();
   const [hours, minutes] = currentTime.split(':').map(Number);
   const totalMinutes = hours * 60 + minutes;
 
-  // Define time phases (in minutes since midnight)
-  const isNight = totalMinutes >= 1080 || totalMinutes < 300; // 6 PM (1080) to 5 AM (300)
-  const isSunrise = totalMinutes >= 300 && totalMinutes < 360; // 5 AM to 6 AM
-  const isDay = totalMinutes >= 360 && totalMinutes < 1080; // 6 AM to 6 PM
-  const isSunset = totalMinutes >= 1080 && totalMinutes < 1140; // 6 PM to 7 PM
+  const isNight = totalMinutes >= 1080 || totalMinutes < 300; // 7:00 PM to 5:00 AM
+  const isSunrise = totalMinutes >= 300 && totalMinutes < 360; // 5:00 AM to 6:00 AM
+  const isDay = totalMinutes >= 360 && totalMinutes < 1080; // 6:00 AM to 7:00 PM
+  const isSunset = totalMinutes >= 1080 && totalMinutes < 1140; // 7:00 PM to 8:00 PM
 
   const timeClass = isNight ? 'night-animation' :
                    isSunrise ? 'sunrise-animation' :
                    isDay ? 'day-animation' :
-                   isSunset ? 'sunset-animation' : 'night-animation'; // Default to night if outside ranges
+                   isSunset ? 'sunset-animation' : 'night-animation';
+
+  const getWeatherAnimationType = (condition) => {
+    if (!condition) return 'clear';
+    const lowerCaseCondition = condition.toLowerCase();
+    if (lowerCaseCondition.includes('rain') || lowerCaseCondition.includes('shower')) return 'rain';
+    if (lowerCaseCondition.includes('snow')) return 'snow';
+    if (lowerCaseCondition.includes('thunder') || lowerCaseCondition.includes('storm')) return 'thunder';
+    if (lowerCaseCondition.includes('cloud') || lowerCaseCondition.includes('overcast') || lowerCaseCondition.includes('partly')) return 'cloudy';
+    if (lowerCaseCondition.includes('wind') || lowerCaseCondition.includes('breezy')) return 'windy';
+    if (lowerCaseCondition.includes('mist') || lowerCaseCondition.includes('fog')) return 'fog';
+    if (lowerCaseCondition.includes('hail')) return 'hail';
+    return 'clear';
+  };
+
+  const weatherCondition = weatherData?.current?.condition?.text || 'Clear';
+  // const animationType = getWeatherAnimationType(weatherCondition);
+  const animationType = getWeatherAnimationType('hail');
 
   return (
     <div className={`fixed inset-0 z-0 overflow-hidden ${timeClass}`}>
-      {/* Night base elements (Moon on left) */}
+      {/* Time-based elements */}
       {isNight && (
         <>
           <div className="night-sky absolute inset-0"></div>
-          <div className="moon absolute h-20 w-20 bg-gray-200 rounded-full opacity-70" style={{ top: '30%', left: '10%', transform: 'translateX(-50%)' }}></div>
+          <div className="moon absolute h-24 w-24 bg-gray-200 rounded-full opacity-75" style={{ top: '25%', left: '15%', boxShadow: '0 0 40px 15px rgba(211, 211, 211, 0.4)' }}></div>
           <div className="stars absolute w-full h-full">
-            {[...Array(20)].map((_, i) => (
-              <div key={i} className="star absolute bg-white opacity-60" style={{ animationDelay: `${Math.random() * 5}s` }} />
+            {[...Array(30)].map((_, i) => (
+              <div key={i} className="star absolute bg-white" style={{
+                width: `${Math.random() * 3 + 1}px`,
+                height: `${Math.random() * 3 + 1}px`,
+                left: `${Math.random() * 100}%`,
+                top: `${Math.random() * 70}%`,
+                opacity: `${Math.random() * 0.5 + 0.5}`,
+                animation: `star-twinkle ${Math.random() * 5 + 3}s infinite alternate`
+              }} />
             ))}
           </div>
         </>
       )}
 
-      {/* Sunrise base elements (Sun on right, Moon fading out) */}
       {isSunrise && (
         <>
           <div className="sunrise-sky absolute inset-0"></div>
-          <div className="sun absolute h-20 w-20 bg-yellow-300 rounded-full opacity-80" style={{ top: '70%', right: '10%', transform: 'translateY(-50%)' }}></div>
-          <div className="moon absolute h-20 w-20 bg-gray-200 rounded-full opacity-20" style={{ top: '30%', left: '10%', transform: 'translateX(-50%)', transition: 'opacity 5s' }}></div>
+          <div className="sun absolute h-20 w-20 bg-yellow-300 rounded-full opacity-80" style={{ top: '70%', right: '10%', transform: 'translateY(-50%)', boxShadow: '0 0 70px 20px rgba(255, 215, 0, 0.6)' }}></div>
         </>
       )}
 
-      {/* Day base elements (Sun on right) */}
       {isDay && (
         <>
           <div className="day-sky absolute inset-0"></div>
-          <div className="sun absolute h-20 w-20 bg-yellow-300 rounded-full opacity-90" style={{ top: '40%', right: '15%', transform: 'translateY(-50%)' }}></div>
+          <div className="sun absolute h-20 w-20 bg-yellow-300 rounded-full opacity-90" style={{ top: '40%', right: '15%', transform: 'translateY(-50%)', boxShadow: '0 0 80px 25px rgba(255, 215, 0, 0.7)' }}></div>
         </>
       )}
 
-      {/* Sunset base elements (Sun on right, Moon fading in) */}
       {isSunset && (
         <>
           <div className="sunset-sky absolute inset-0"></div>
-          <div className="sun absolute h-20 w-20 bg-yellow-400 rounded-full opacity-70" style={{ top: '70%', right: '10%', transform: 'translateY(-50%)' }}></div>
-          <div className="moon absolute h-20 w-20 bg-gray-200 rounded-full opacity-30" style={{ top: '30%', left: '10%', transform: 'translateX(-50%)', transition: 'opacity 5s' }}></div>
+          <div className="sun absolute h-20 w-20 bg-yellow-400 rounded-full opacity-70" style={{ top: '70%', right: '10%', transform: 'translateY(-50%)', boxShadow: '0 0 60px 15px rgba(255, 69, 0, 0.5)' }}></div>
         </>
       )}
+
+      {/* Weather-specific animations */}
+      {animationType === 'rain' && (
+        <div className="rain absolute inset-0">
+          {[...Array(150)].map((_, i) => (
+            <div key={i} className="raindrop absolute bg-blue-400" style={{
+              width: `${Math.random() * 3 + 1}px`,
+              height: `${Math.random() * 20 + 10}px`,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * -50}vh`,
+              animation: `rain-fall ${Math.random() * 0.5 + 0.5}s linear infinite`,
+              transform: `rotate(${Math.random() * 30 - 15}deg) translateX(${Math.random() * 20 - 10}px)`
+            }} />
+          ))}
+          <div className="rain-splash absolute bottom-0 w-full h-20 bg-blue-300 opacity-40" style={{ animation: 'splash-ripple 2s infinite' }}></div>
+        </div>
+      )}
+
+      {animationType === 'snow' && (
+        <div className="snow absolute inset-0">
+          {[...Array(120)].map((_, i) => (
+            <div key={i} className="snowflake absolute bg-white" style={{
+              width: `${Math.random() * 8 + 2}px`,
+              height: `${Math.random() * 8 + 2}px`,
+              borderRadius: '50%',
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * -50}vh`,
+              animation: `snow-fall ${Math.random() * 7 + 5}s ease-in-out infinite`,
+              boxShadow: '0 0 10px 2px rgba(255, 255, 255, 0.3)'
+            }} />
+          ))}
+        </div>
+      )}
+
+      {animationType === 'thunder' && (
+        <div className="thunder absolute inset-0">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="lightning absolute h-0 w-0 border-l-[60px] border-l-transparent border-r-[60px] border-r-transparent border-b-[150px] border-b-white opacity-0" style={{
+              top: `${15 + Math.random() * 30}%`,
+              left: `${50 + Math.random() * 30 - 15}%`,
+              transform: 'translateX(-50%)',
+              animation: `lightning-strike ${Math.random() * 10 + 8}s infinite`
+            }} />
+          ))}
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="flash absolute bg-yellow-300 opacity-0" style={{
+              top: `${15 + Math.random() * 30}%`,
+              left: `${50 + Math.random() * 30 - 15}%`,
+              width: `${Math.random() * 6 + 2}px`,
+              height: `${100 + Math.random() * 80}px`,
+              animation: `flash-blink ${Math.random() * 1.5 + 1}s infinite`
+            }} />
+          ))}
+          <div className="thunder-rumble absolute inset-0 bg-gray-800 opacity-0" style={{ animation: 'rumble-pulse 4s infinite' }}></div>
+        </div>
+      )}
+
+      {animationType === 'cloudy' && (
+        <div className="clouds absolute inset-0">
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="cloud absolute" style={{
+              width: `${150 + Math.random() * 100}px`,
+              height: `${60 + Math.random() * 40}px`,
+              top: `${-10 + i * 12 + Math.random() * 15}%`,
+              left: `${-40 + i * 15}%`,
+              background: `radial-gradient(circle at ${Math.random() * 80 + 10}% ${Math.random() * 80 + 10}%, rgba(255, 255, 255, 0.9), rgba(220, 220, 220, 0.7) ${Math.random() * 60 + 30}%, rgba(180, 180, 180, 0.5))`,
+              borderRadius: `${Math.random() * 30 + 15}px ${Math.random() * 30 + 15}px ${Math.random() * 30 + 15}px ${Math.random() * 30 + 15}px`,
+              opacity: `${0.6 + Math.random() * 0.3}`,
+              animation: `cloud-drift ${18 + Math.random() * 12}s linear infinite`,
+              filter: 'blur(4px)',
+              zIndex: i
+            }} />
+          ))}
+        </div>
+      )}
+
+      {animationType === 'windy' && (
+        <div className="wind absolute inset-0">
+          {[...Array(12)].map((_, i) => (
+            <div key={i} className="wind-leaf absolute bg-green-700" style={{
+              width: `${Math.random() * 18 + 6}px`,
+              height: `${Math.random() * 25 + 6}px`,
+              top: `${Math.random() * 60 + 10}%`,
+              left: `${5 + i * 7}%`,
+              animation: `wind-gust ${2 + Math.random() * 4}s ease-in-out infinite`,
+              transform: `rotate(${Math.random() * 180 - 90}deg)`,
+              borderRadius: '50%',
+              boxShadow: '0 0 5px rgba(0, 100, 0, 0.3)'
+            }} />
+          ))}
+          {[...Array(40)].map((_, i) => (
+            <div key={i} className="wind-dust absolute bg-gray-500" style={{
+              width: `${Math.random() * 6 + 2}px`,
+              height: `${Math.random() * 6 + 2}px`,
+              top: `${Math.random() * 70 + 10}%`,
+              left: `${Math.random() * 100}%`,
+              animation: `dust-gust ${Math.random() * 5 + 2}s ease-in-out infinite`,
+              opacity: `${Math.random() * 0.6 + 0.2}`
+            }} />
+          ))}
+        </div>
+      )}
+
+      {animationType === 'fog' && (
+        <div className="fog absolute inset-0" style={{
+          background: 'linear-gradient(to bottom, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.3))',
+          backdropFilter: 'blur(15px)',
+          animation: 'fog-spread 25s infinite alternate'
+        }}>
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="fog-layer absolute inset-0" style={{
+              background: `radial-gradient(circle at ${Math.random() * 100}% ${Math.random() * 100}%, rgba(255, 255, 255, ${0.4 - i * 0.1}), transparent 70%)`,
+              animation: `fog-drift ${25 + i * 5}s linear infinite`,
+              transform: `translateX(${i * -10}%)`,
+              opacity: `${0.8 - i * 0.15}`
+            }} />
+          ))}
+        </div>
+      )}
+
+      {animationType === 'hail' && (
+        <div className="hail absolute inset-0">
+          {[...Array(150)].map((_, i) => (
+            <div key={i} className="hailstone absolute bg-white" style={{
+              width: `${Math.random() * 10 + 4}px`,
+              height: `${Math.random() * 10 + 4}px`,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * -50}vh`,
+              animation: `hail-bounce ${Math.random() * 0.7 + 0.4}s linear infinite`,
+              transform: `rotate(${Math.random() * 360}deg) translateX(${Math.random() * 30 - 15}px)`,
+              boxShadow: '0 0 15px 3px rgba(255, 255, 255, 0.7)'
+            }} />
+          ))}
+          {[...Array(20)].map((_, i) => (
+            <div key={i} className="hail-impact absolute bg-white bg-opacity-20" style={{
+              width: `${Math.random() * 20 + 10}px`,
+              height: `${Math.random() * 20 + 10}px`,
+              bottom: '0',
+              left: `${Math.random() * 100}%`,
+              animation: `impact-pulse ${Math.random() * 2 + 1}s infinite`,
+              opacity: `${Math.random() * 0.3 + 0.2}`
+            }} />
+          ))}
+        </div>
+      )}
+
+      {/* Default clear/sunny (no extra animation) */}
+      {animationType === 'clear' && null}
     </div>
   );
 };
