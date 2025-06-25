@@ -26,13 +26,19 @@ function App() {
       console.log('Current weather data:', currentResponse.data);
       setWeatherData(currentResponse.data);
 
-      const today = new Date();
+      const today =  new Date(currentResponse.data?.location?.localtime);
+      // const locationDate = today.toISOString().split('T')[0]; 
+      console.log('Current date for historical data:', today);
       const historicalDates = [];
-      for (let i = 1; i >= 0; i--) {
+      for (let i = 2; i > 0; i--) {
         const date = new Date(today);
-        date.setDate(today.getDate() - i); 
-        historicalDates.push(date.toISOString().split('T')[0]); 
+        date.setDate(today.getDate() - i);
+        console.log('fetching date:', date);
+        historicalDates.push(date.toDateString().split(' ').slice(1).join(' ')); // Format as "DD MMM"
       }
+
+      console.log('Historical dates:', historicalDates);
+
       const historicalPromises = historicalDates.map(date =>
         axios.get('http://localhost:3000/api/history', {
           params: { q: locationName, dt: date }
@@ -42,7 +48,7 @@ function App() {
       const historicalDataArray = historicalResponses.map(response => ({
         date: response.data.forecast.forecastday[0].date,
         hourly: response.data.forecast.forecastday[0].hour.map(h => ({
-          time: h.time.split(' ')[1], 
+          time: h.time.split(' ')[1],
           temp: h.temp_c,
           condition: h.condition.text,
           precip: h.precip_mm,
@@ -52,18 +58,19 @@ function App() {
       setHistoricalData(historicalDataArray);
 
       const forecastDates = [];
-      for (let i = 1; i <= 3; i++) {
+      for (let i = 1; i <= 4; i++) {
         const date = new Date(today);
-        date.setDate(today.getDate() + i); 
-        forecastDates.push(date.toISOString().split('T')[0]); 
+        date.setDate(today.getDate() + i);
+        forecastDates.push(date.toDateString().split(' ').slice(1).join(' '));
       }
+
       const forecastResponse = await axios.get('http://localhost:3000/api/forecast', {
-        params: { q: locationName, days: 3 } 
+        params: { q: locationName, days: 4 } 
       });
       const forecastDataArray = forecastResponse.data.forecast.forecastday.map(day => ({
         date: day.date,
         hourly: day.hour.map(h => ({
-          time: h.time.split(' ')[1], 
+          time: h.time.split(' ')[1],
           temp: h.temp_c,
           condition: h.condition.text,
           precip: h.precip_mm,
@@ -88,16 +95,16 @@ function App() {
           (position) => {
             const { latitude, longitude } = position.coords;
             console.log(`Geolocation detected: ${latitude}, ${longitude}, using Colombo as fallback`);
-            resolve('Colombo'); 
+            resolve('Colombo');
           },
           (error) => {
             console.error('Geolocation error:', error);
-            resolve('Colombo'); 
+            resolve('Colombo');
           }
         );
       } else {
         console.error('Geolocation is not supported by this browser.');
-        resolve('Colombo'); 
+        resolve('Colombo');
       }
     });
   };
@@ -119,7 +126,6 @@ function App() {
     );
   }
 
-  // Determine current phase for glassmorphic adjustment
   const getCurrentPhase = () => {
     if (!weatherData?.location?.localtime) return 'night';
     const [hours, minutes] = weatherData.location.localtime.split(' ')[1].split(':').map(Number);
@@ -137,7 +143,7 @@ function App() {
     <div className="relative">
       <WeatherBackgroundAnimation weatherData={weatherData} />
       <div className="grid grid-cols-2 gap-6 w-full max-w-6xl mx-auto py-6 z-20">
-        <WeatherSearch onSearch={handleSearch} phase={currentPhase}  />
+        <WeatherSearch onSearch={handleSearch} phase={currentPhase} />
         <LocationDetails location={weatherData?.location} phase={currentPhase} />
       </div>
       <div className="flex items-center justify-center py-6 z-20">
