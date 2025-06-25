@@ -584,7 +584,7 @@ body {
   }
 }
 
-@media (max-width: 320px) {
+@media (max-width: 360px) {
   .grid.grid-cols-1.md\:grid-cols-\[2fr_4fr\]> :first-child {
     min-height: 250px;
     padding: 0.75rem;
